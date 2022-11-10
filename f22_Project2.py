@@ -5,6 +5,8 @@ import os
 import csv
 import unittest
 
+#Worked with Emily Veguilla Chris Sayah
+
 
 def get_listings_from_search_results(html_file):
     """
@@ -25,7 +27,51 @@ def get_listings_from_search_results(html_file):
         ('Loft in Mission District', 210, '1944564'),  # example
     ]
     """
-    pass
+    listings = []
+    f = open(html_file)
+    soup = BeautifulSoup(f, 'html.parser')
+    f.close()
+    a_tag = soup.find_all('a')
+    for item in a_tag:
+        x = item.get('target', None)
+        if x != None and x not in listings:
+            listings.append(x)
+    ids = []
+    pattern = 'listing_(\d+)'
+    for item in listings:
+        x = re.findall(pattern, str(item))
+        ids += x
+    info = []
+    for id in ids:
+        url = f'listing_{id}.html'
+        f = open(f'html_files\{url}', encoding = "utf8")
+        soup = BeautifulSoup(f, 'html.parser')
+        f.close()
+        titleX = soup.find('title')
+        title = titleX.text
+        t = title.split(" - ")
+        finalTitle = t[0]
+        
+
+
+        price = soup.find('span', class_= "_tyxjp1")
+        pernight = price.text[1:]
+        toop = (finalTitle, int(pernight), id)
+        info.append(toop)
+   
+    return info
+        
+        
+
+
+
+
+
+
+    
+
+    
+
 
 
 def get_listing_information(listing_id):
@@ -52,7 +98,56 @@ def get_listing_information(listing_id):
         number of bedrooms
     )
     """
-    pass
+    f = open(f"html_files/listing_{listing_id}.html", encoding = "utf8")
+    soup = BeautifulSoup(f, 'html.parser')
+    f.close()
+    x = soup.find("li", class_ = "f19phm7j dir dir-ltr")
+    policy = x.span.text
+    if "pending" in policy.lower():
+        policy = "Pending"
+    elif "exempt" in policy.lower():
+        policy = "Exempt"
+    elif "not needed" in policy.lower():
+        policy = 'Exempt'
+    else:
+        policy = policy
+
+    
+
+
+
+
+
+
+    b = soup.find('h2', class_ = "_14i3z6h")
+    typetext = b.text
+    type = "Entire Room"
+    for word in typetext.split(" "):
+        if "private" == word.lower():
+            type = "Private Room"
+        elif "shared" == word.lower():
+            type = "Shared Room"
+    #print(type)
+
+    soupy = soup.find_all('li', class_ = "l7n4lsf")[1].find_all("span")[2]
+    num_beds = soupy.text.split(' ')[0]
+    
+
+    if num_beds.lower() == 'studio':
+        totalbeds = "studio"
+    else:
+        totalbeds = int(num_beds)
+
+    toop = (policy, type, totalbeds)
+
+    return toop
+    
+    #print(beds)
+
+
+
+
+
 
 
 def get_detailed_listing_database(html_file):
@@ -69,7 +164,14 @@ def get_detailed_listing_database(html_file):
         ...
     ]
     """
-    pass
+    f = get_listings_from_search_results(html_file)
+    list = []
+    for b in f:
+        s = get_listing_information(b[2])
+        list.append(b + s)
+    return list
+    
+    
 
 
 def write_csv(data, filename):
