@@ -44,7 +44,7 @@ def get_listings_from_search_results(html_file):
 
     for item in a_tags:
         stripped = item.lstrip('listing_')
-        id_nums.append(stripped)
+        id_nums.append(stripped.strip())
     
     listing_title = soup.find_all('div', class_ = "t1jojoys dir dir-ltr")
 
@@ -64,31 +64,8 @@ def get_listings_from_search_results(html_file):
     for i in range(len(listing_list)):
         tup = (listing_list[i], int(costs[i]), id_nums[i])
         tup_list.append(tup)
-        
+
     return tup_list
-
-    # for item in listings:
-    #     x = re.findall(pattern, str(item))
-    #     ids += x
-    # info = []
-    # for id in ids:
-    #     url = f'listing_{id}.html'
-    #     f = open(f'html_files\{url}', encoding = "utf8")
-    #     soup = BeautifulSoup(f, 'html.parser')
-    #     f.close()
-    #     titleX = soup.find('title')
-    #     title = titleX.text
-    #     t = title.split(" - ")
-    #     finalTitle = t[0]
-        
-
-
-    #     price = soup.find('span', class_= "_tyxjp1")
-    #     pernight = price.text[1:]
-    #     toop = (finalTitle, int(pernight), id)
-    #     info.append(toop)
-   
-    # return info
         
         
 
@@ -199,8 +176,8 @@ def get_detailed_listing_database(html_file):
         s = get_listing_information(b[2])
         list.append(b + s)
     return list
-    
-    
+    #return list
+
 
 
 def write_csv(data, filename):
@@ -233,6 +210,7 @@ def write_csv(data, filename):
         sorteddata = sorted(data, key = lambda x: x[1]) 
         for data in sorteddata:
             writer.writerow(data)
+    pass
     
 
 
