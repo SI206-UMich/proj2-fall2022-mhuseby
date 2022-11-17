@@ -28,31 +28,31 @@ def get_listings_from_search_results(html_file):
     ]
     """
     
-    a_tags = []
-    id_nums = []
+    aTags = []
+    ids = []
     f = open(html_file)
     soup = BeautifulSoup(f, 'html.parser')
     f.close()
 
-    title_tag = soup.find_all('a', class_ = "ln2bl2p dir dir-ltr")
+    titletag = soup.find_all('a', class_ = "ln2bl2p dir dir-ltr")
     pattern = 'listing_(.)*'
 
-    for x in title_tag:
-        if re.search(pattern, str(x)):
-            a_tags.append(x.get('target'))
+    for item in titletag:
+        if re.search(pattern, str(item)):
+            aTags.append(item.get('target'))
     
 
-    for item in a_tags:
+    for item in aTags:
         stripped = item.lstrip('listing_')
-        id_nums.append(stripped.strip())
+        ids.append(stripped.strip())
     
     listing_title = soup.find_all('div', class_ = "t1jojoys dir dir-ltr")
 
     listing_list = []
 
-    for x in listing_title:
-        if x not in listing_list:
-            listing_list.append(x.text)
+    for q in listing_title:
+        if q not in listing_list:
+            listing_list.append(q.text)
 
 
         costs = []
@@ -60,12 +60,12 @@ def get_listings_from_search_results(html_file):
         for cost in cost1:
             costs.append(cost.text[1:])
 
-    tup_list = []
-    for i in range(len(listing_list)):
-        tup = (listing_list[i], int(costs[i]), id_nums[i])
-        tup_list.append(tup)
+    toop = []
+    for n in range(len(listing_list)):
+        tup = (listing_list[n], int(costs[n]), ids[n])
+        toop.append(tup)
 
-    return tup_list
+    return toop
         
         
 
@@ -176,7 +176,7 @@ def get_detailed_listing_database(html_file):
         s = get_listing_information(b[2])
         list.append(b + s)
     return list
-    #return list
+    
 
 
 
